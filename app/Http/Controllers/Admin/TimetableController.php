@@ -44,7 +44,6 @@ class TimetableController extends Controller
         $classes = SchoolClass::all();
         $teachers = User::where('role', 'teacher')->get();
 
-        // अगर AJAX call है तो JSON return
         if ($request->ajax()) {
             return response()->json($timetables);
         }
@@ -63,7 +62,6 @@ class TimetableController extends Controller
         return view('admin.timetables.create', compact('classes', 'teachers', 'subjects'));
     }
 
-    // Store new timetable entry
     public function store(Request $request)
     {
         $request->validate([
@@ -74,7 +72,6 @@ class TimetableController extends Controller
             'teacher_id' => 'required|exists:teachers,id',
         ]);
 
-        // Conflict check: same class, same day & period
         if (
             Timetable::where('class_id', $request->class_id)
                 ->where('day', $request->day)
@@ -84,7 +81,6 @@ class TimetableController extends Controller
             return back()->withErrors(['Class already has a subject in this period.']);
         }
 
-        // Conflict check: same teacher, same day & period
         if (
             Timetable::where('teacher_id', $request->teacher_id)
                 ->where('day', $request->day)
@@ -99,7 +95,6 @@ class TimetableController extends Controller
         return redirect()->route('admin.timetables.index')->with('success', 'Timetable entry added successfully!');
     }
 
-    // Edit timetable entry
     public function edit(Timetable $timetable)
     {
         $classes = SchoolClass::all();
@@ -108,7 +103,6 @@ class TimetableController extends Controller
         return view('admin.timetables.edit', compact('timetable', 'classes', 'teachers', 'subjects'));
     }
 
-    // Update timetable entry
     public function update(Request $request, Timetable $timetable)
     {
         $request->validate([
@@ -119,7 +113,6 @@ class TimetableController extends Controller
             'teacher_id' => 'required|exists:teachers,id',
         ]);
 
-        // Conflict check: same class, same day & period excluding current
         if (
             Timetable::where('class_id', $request->class_id)
                 ->where('day', $request->day)
@@ -130,7 +123,6 @@ class TimetableController extends Controller
             return back()->withErrors(['Class already has a subject in this period.']);
         }
 
-        // Conflict check: same teacher, same day & period excluding current
         if (
             Timetable::where('teacher_id', $request->teacher_id)
                 ->where('day', $request->day)
@@ -146,28 +138,9 @@ class TimetableController extends Controller
         return redirect()->route('admin.timetables.index')->with('success', 'Timetable entry updated successfully!');
     }
 
-    // Delete timetable entry
     public function destroy(Timetable $timetable)
     {
         $timetable->delete();
         return redirect()->route('admin.timetables.index')->with('success', 'Timetable entry deleted successfully!');
-    }
-
-    // Optional: AJAX fetch timetable by class
-    public function getByClass($class_id)
-    {
-        $timetable = Timetable::with('teacher.user', 'subject')
-            ->where('class_id', $class_id)
-            ->get();
-        return response()->json($timetable);
-    }
-
-    // Optional: AJAX fetch timetable by teacher
-    public function getByTeacher($teacher_id)
-    {
-        $timetable = Timetable::with('schoolClass', 'subject')
-            ->where('teacher_id', $teacher_id)
-            ->get();
-        return response()->json($timetable);
     }
 }
