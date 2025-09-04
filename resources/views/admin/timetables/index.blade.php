@@ -83,7 +83,7 @@
                                     @forelse($entries as $entry)
                                         <div class="mb-2">
                                             <span class="block text-sm font-semibold">{{ $entry->subject->name }}</span>
-                                            <span class="block text-xs text-gray-600">{{ $entry->teacher->user->name }}</span>
+                                            <span class="block text-xs text-gray-600">{{ $entry->teacher->name }}</span>
                                             <span class="block text-xs text-gray-500">({{ $entry->schoolClass->name }})</span>
                                         </div>
                                     @empty
@@ -113,13 +113,14 @@
                 </thead>
                 <tbody>
                     @forelse($timetables as $t)
+                  
                         <tr>
                             <td class="p-2 border">{{ $loop->iteration }}</td>
                             <td class="p-2 border">{{ $t->day }}</td>
                             <td class="p-2 border">{{ $t->period }}</td>
                             <td class="p-2 border">{{ $t->schoolClass->name }}</td>
                             <td class="p-2 border">{{ $t->subject->name }}</td>
-                            <td class="p-2 border">{{ $t->teacher->user->name }}</td>
+                            <td class="p-2 border">{{ $t->teacher->name }}</td>
                             @if(auth()->user()->role === 'admin')
                                 <td class="p-2 border flex gap-2">
                                     <a href="{{ route('admin.timetables.edit', $t) }}"

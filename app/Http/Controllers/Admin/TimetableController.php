@@ -30,7 +30,7 @@ class TimetableController extends Controller
                 ]);
         }
 
-        $query = Timetable::with(['schoolClass', 'subject', 'teacher.user']);
+        $query = Timetable::with(['schoolClass', 'subject', 'teacher']);
 
         if ($request->filled('class_id')) {
             $query->where('class_id', $request->class_id);
@@ -47,7 +47,7 @@ class TimetableController extends Controller
         if ($request->ajax()) {
             return response()->json($timetables);
         }
-
+        // dd($timetables);
         return view('admin.timetables.index', compact('timetables', 'classes', 'teachers'));
     }
 
@@ -69,7 +69,7 @@ class TimetableController extends Controller
             'period' => 'required|integer|min:1',
             'class_id' => 'required|exists:classes,id',
             'subject_id' => 'required|exists:subjects,id',
-            'teacher_id' => 'required|exists:teachers,id',
+            'teacher_id' => 'required|exists:users,id',
         ]);
 
         if (

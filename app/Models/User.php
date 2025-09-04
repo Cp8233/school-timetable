@@ -48,4 +48,11 @@ class User extends Authenticatable
     {
         return $this->hasOne(Teacher::class);
     }
+
+    public function timetable()
+    {
+        return $this->hasOne(Timetable::class);
+    }
+
 }
+
